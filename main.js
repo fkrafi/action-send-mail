@@ -31,7 +31,7 @@ function getFrom(from, username) {
 }
 
 async function getAttachments(attachments) {
-    const files = await (await glob.create(attachments.join('\n'))).glob()
+    const files = await (await glob.create(attachments.split(',').join('\n'))).glob()
     return files;
 }
 
