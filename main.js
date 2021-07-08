@@ -19,10 +19,6 @@ function getBody(bodyOrFile, convertMarkdown) {
         body = converter.makeHtml(body)
     }
 
-    console.log('#########');
-    console.log(body);
-    console.log('#########');
-
     return body
 }
 
@@ -36,9 +32,6 @@ function getFrom(from, username) {
 
 async function getAttachments(attachments) {
     const files = await (await glob.create(attachments.split(',').join('\n'))).glob()
-    console.log('=============');
-    console.log(files);
-    console.log('=============');
     return files;
 }
 
@@ -80,17 +73,21 @@ async function main() {
         })
 
         const info = await transport.sendMail({
-            from: getFrom(from, username),
-            to: to,
-            subject: subject,
-            cc: cc ? cc : undefined,
-            bcc: bcc ? bcc : undefined,
-            replyTo: replyTo ? replyTo : undefined,
-            text: body ? getBody(body, false) : undefined,
-            html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
-            attachments: attachments ? getAttachments(attachments) : undefined,
-            priority: priority ? priority : undefined,
-        })
+          from: getFrom(from, username),
+          to: to,
+          subject: subject,
+          cc: cc ? cc : undefined,
+          bcc: bcc ? bcc : undefined,
+          replyTo: replyTo ? replyTo : undefined,
+          text: body ? getBody(body, false) : undefined,
+          html: htmlBody ? getBody(htmlBody, convertMarkdown) : undefined,
+          attachments: attachments
+            ? (
+                await getAttachments(attachments)
+              ).map((f) => ({ path: f.trim() }))
+            : undefined,
+          priority: priority ? priority : undefined,
+        });
     } catch (error) {
         core.setFailed(error.message)
     }
