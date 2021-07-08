@@ -19,6 +19,10 @@ function getBody(bodyOrFile, convertMarkdown) {
         body = converter.makeHtml(body)
     }
 
+    console.log('#########');
+    console.log(body);
+    console.log('#########');
+
     return body
 }
 
@@ -32,6 +36,9 @@ function getFrom(from, username) {
 
 async function getAttachments(attachments) {
     const files = await (await glob.create(attachments.split(',').join('\n'))).glob()
+    console.log('=============');
+    console.log(files);
+    console.log('=============');
     return files;
 }
 
